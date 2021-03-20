@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Form Autosave</title>
+
+	<style type="text/css">
+		body {
+			margin: 1em auto;
+			max-width: 40em;
+			width: 88%;
+		}
+
+		label,
+		input,
+		textarea {
+			display: block;
+			width: 100%;
+		}
+
+		input,
+		textarea {
+			margin-bottom: 1em;
+		}
+
+		textarea {
+			height: 8em;
+		}
+	</style>
+</head>
+<body>
+
+	<h1>Form Autosave</h1>
+
+	<form class="save-me" id="save-me">
+
+		<label for="name">Name</label>
+		<input type="text" name="name" id="name">
+
+		<label for="address">Address</label>
+		<input type="text" name="address" id="address">
+
+		<label for="email">Email</label>
+		<input type="email" name="email" id="email">
+
+		<label for="more">Additional thoughts?</label>
+		<textarea name="more" id="more"></textarea>
+
+		<p>
+			<button type="submit">Submit</button>
+		</p>
+
+	</form>
+
+	<script>
+		;(() => {
+			const form = document.querySelector('form');
+            const inputs = document.querySelectorAll('[name]');
+
+			const state = {
+					name: '',
+					address: '',
+					email: '',
+					more: '',
+            	};        
+
+            const handleInputChange = (e) => {
+                if (!e.target.closest('#save-me')) return;
+
+                state[e.target.name] = e.target.value;
+                localStorage.setItem('formValues', JSON.stringify(state));
+            };
+
+			const handleFormSubmit = (e) => {
+				localStorage.removeItem('formValues');
+			};
+
+			const setState = () => {
+				const retrievedState = JSON.parse(localStorage.getItem('formValues'));
+
+				for (key in state) {
+					state[key] = retrievedState[key]
+				}
+			};
+            
+            const setFormValues = () => {
+                inputs.forEach(input => {
+                    for (key in state) {
+                        if (input.name === key) {
+                            input.value = state[key];
+                        }
+                    }
+                })
+            };
+
+			if (localStorage.getItem('formValues')) {
+				setState();
+			}
+            
+            setFormValues();            
+            
+            document.addEventListener('input', handleInputChange, false);
+			form.addEventListener('submit', handleFormSubmit, false);
+        })();
+	</script>
+</body>
+</html>
