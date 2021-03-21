@@ -53,7 +53,6 @@
 
 	<script>
 		;(() => {
-			const form = document.querySelector('form');
             const inputs = document.querySelectorAll('[name]');
 
 			const state = {
@@ -71,6 +70,8 @@
             };
 
 			const handleFormSubmit = (e) => {
+				if (!e.target.closest('#save-me')) return;
+
 				localStorage.removeItem('formValues');
 			};
 
@@ -83,6 +84,10 @@
 			};
             
             const setFormValues = () => {
+				if (localStorage.getItem('formValues')) {
+					setState();
+				}
+
                 inputs.forEach(input => {
                     for (key in state) {
                         if (input.name === key) {
@@ -91,15 +96,11 @@
                     }
                 })
             };
-
-			if (localStorage.getItem('formValues')) {
-				setState();
-			}
             
             setFormValues();            
             
             document.addEventListener('input', handleInputChange, false);
-			form.addEventListener('submit', handleFormSubmit, false);
+			document.addEventListener('submit', handleFormSubmit, false);
         })();
 	</script>
 </body>
